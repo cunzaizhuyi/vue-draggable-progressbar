@@ -1,27 +1,52 @@
-# vue-slot
+# install
 
-> A Vue.js project
+npm install vue-draggable-progressbar --save
 
-## Build Setup
 
-``` bash
-# install dependencies
-npm install
+# import
 
-# serve with hot reload at localhost:8080
-npm run dev
+import progressBar from 'vue-draggable-progressbar'
 
-# build for production with minification
-npm run build
+# 用例
 
-# build for production and view the bundle analyzer report
-npm run build --report
+```
+<progress-bar ref="aa"></progress-bar>
 
-# run e2e tests
-npm run e2e
+<progress-bar width="40%" leftBg="greenyellow" bgc="#ccc" ballBgc="red"></progress-bar>
 
-# run all tests
-npm test
+<progress-bar width="60%" leftBg="linear-gradient(to right, yellow, pink)" bgc="#ccc" ballBgc="red"></progress-bar>
+
+<progress-bar width="80%" leftBg="yellow" bgc="#ccc" ballBgc="red" height="30px"></progress-bar>
+
+<progress-bar leftBg="greenyellow" bgc="#ccc" ballBgc="rgba(255,0,0,0.2)" height="40px"></progress-bar>
+
+<progress-bar leftBg="greenyellow" bgc="#ccc" ballBgc="red" :max="max" :value="value" :min="min"
+              @pbar-drag="drag" @pbar-seek="seek"></progress-bar>
+
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+# 用git clone方式看效果
+
+(1) git clone https://github.com/cunzaizhuyi/vue-draggable-progressbar.git
+
+(2) npm run dev
+
+(3) open browser,input url: http://localhost:8080/#/
+
+# props
+
+* leftBg：进度条已划过部分背景色
+* bgc：进度条还未划过部分背景色
+* ballBgc：滑块背景色
+* width：进度条占父组件的宽度百分比，传百分比数值
+* height：进度条高度，传像素值
+* max：进度条最大值
+* min：最小值
+* value：当前值
+
+
+# 事件
+
+* pbar-drag: 拖动进度条时触发，回传value值和百分比值
+* pbar-drag: 点击进度条某一位置时触发，回传value值和百分比值
+
