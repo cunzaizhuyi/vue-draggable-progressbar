@@ -50,7 +50,7 @@
                 isMouseDownOnBody: false,
                 // 鼠标离开进度条时的clientX
                 outProgressClientX: 0,
-                target: null,
+                isCurrentProgress: false,
             }
         },
         computed: {
@@ -62,29 +62,28 @@
             mousedownHandler(e){
                 if(e.which === 1){
                     this.isMouseDownOnBall = true;
-                    this.target = e.target;
+                    this.isCurrentProgress = true;
                 }
             },
             mousemoveHandler(e){
-                if(this.isMouseDownOnBall){
+                if(this.isMouseDownOnBall && this.isCurrentProgress){
                     // 修改进度条本身
                     let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
                     let percent = decimal * 100;
                     this.leftStyle.width = percent + '%';
-                    // 修改value
                     this.$emit('pbar-drag', percent);
                 }
             },
             mouseupHandler(e){
-                if(this.isMouseDownOnBall){
+                if(this.isMouseDownOnBall && this.isCurrentProgress){
                     // 修改进度条本身
                     let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
                     let percent = decimal * 100;
                     this.leftStyle.width = percent + '%';
-                    // 修改value
                     this.$emit('pbar-seek', percent);
                     
                     this.isMouseDownOnBall = false;
+                    this.isCurrentProgress = false;
                 }
             },
             mouseoverHandler(e){
@@ -94,7 +93,7 @@
                 }
             },
             mouseoutHandler(e){
-                if(e.which === 1){
+                if(e.which === 1 && this.isCurrentProgress){
                     this.outProgressClientX = e.clientX;
                     this.isMouseDownOnBody = true;
                     this.bodyEventHandler();
@@ -107,6 +106,7 @@
                     this.isMouseDownOnBall = false;
                     this.isMouseDownOnBody = false;
                     this.outProgressClientX = 0;
+                    this.isCurrentProgress = false;
                     body.removeEventListener('mousemove', this.bodyMousemoveHandler);
                 })
             },
@@ -142,7 +142,8 @@
                         }
                     }
                 }
-            }
+            },
+            
         },
         watch: {
             percent(cur, old){
