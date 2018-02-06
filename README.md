@@ -20,7 +20,7 @@ import progressBar from 'vue-draggable-progressbar'
 
 <progress-bar leftBg="greenyellow" bgc="#ccc" ballBgc="rgba(255,0,0,0.2)" height="40px"></progress-bar>
 
-<progress-bar leftBg="greenyellow" bgc="#ccc" ballBgc="red" :max="max" :value="value" :min="min"
+<progress-bar leftBg="greenyellow" bgc="#ccc" ballBgc="red"
               @pbar-drag="drag" @pbar-seek="seek"></progress-bar>
 
 ```
@@ -29,9 +29,11 @@ import progressBar from 'vue-draggable-progressbar'
 
 (1) git clone https://github.com/cunzaizhuyi/vue-draggable-progressbar.git
 
-(2) npm run dev
+(2) npm i
 
-(3) open browser,input url: http://localhost:8080/#/
+(3) npm run dev
+
+(4) open browser,input url: http://localhost:8080/#/
 
 # props
 
@@ -40,9 +42,6 @@ import progressBar from 'vue-draggable-progressbar'
 * ballBgc：滑块背景色
 * width：进度条占父组件的宽度百分比，传百分比数值
 * height：进度条高度，传像素值
-* max：进度条最大值
-* min：最小值
-* value：当前值
 
 
 # 事件
