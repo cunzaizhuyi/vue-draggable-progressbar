@@ -50,6 +50,7 @@
                 isMouseDownOnBody: false,
                 // 鼠标离开进度条时的clientX
                 outProgressClientX: 0,
+                // 主要用于防止一个页面内有多个本组件，MouseMove时互相影响而设置的字段
                 isCurrentProgress: false,
             }
         },
@@ -67,7 +68,6 @@
             },
             mousemoveHandler(e){
                 if(this.isMouseDownOnBall && this.isCurrentProgress){
-                    // 修改进度条本身
                     let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
                     let percent = decimal * 100;
                     this.leftStyle.width = percent + '%';
@@ -76,7 +76,6 @@
             },
             mouseupHandler(e){
                 if(this.isMouseDownOnBall && this.isCurrentProgress){
-                    // 修改进度条本身
                     let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
                     let percent = decimal * 100;
                     this.leftStyle.width = percent + '%';
@@ -99,6 +98,7 @@
                     this.bodyEventHandler();
                 }
             },
+            // body元素的事件监听器
             bodyEventHandler(){
                 let body = document.getElementsByTagName('body')[0];
                 body.addEventListener('mousemove', this.bodyMousemoveHandler);
@@ -110,6 +110,7 @@
                     body.removeEventListener('mousemove', this.bodyMousemoveHandler);
                 })
             },
+            // body元素的mousemove事件监听器
             bodyMousemoveHandler(e){
                 e.preventDefault();
                 if(e.which === 1 && this.isMouseDownOnBody === true){
