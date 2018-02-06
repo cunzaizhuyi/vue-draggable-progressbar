@@ -1,11 +1,10 @@
 <template>
 	<div class="progress-wrapper" :style="wrapStyle">
-        <div class="progress" @mousedown="mousedownHandler" @mouseover="mouseoverHandler"
-             @mousemove="mousemoveHandler" @mouseup="mouseupHandler" :style="pBarStyle">
+        <div class="progress" @mousedown.stop="mousedownHandler" @mouseover.stop="mouseoverHandler"
+             @mousemove.stop="mousemoveHandler" @mouseup.stop="mouseupHandler" @mouseout.stop="mouseoutHandler" :style="pBarStyle">
             <div class="left" :style="leftStyle">
                 <div class="ball" :style="ballStyle"></div>
             </div>
-            <slot></slot>
         </div>
     </div>
 </template>
@@ -19,24 +18,13 @@
             ballBgc: String,
             height: String,
             width: String,
-            max: {
+            percent: {
                 type: Number,
-                default: 100,
-            },
-            min: {
-                type: Number,
-                default: 0,
-            },
-            value: {
-                type: Number,
-                default: 36,
-            },
+                default: 10,
+            }
         },
         data: function () {
             return {
-                pValue: this.value,
-                pMax: this.max,
-                pMin: this.min,
                 wrapStyle: {
                     'width': this.width,
                 },
@@ -45,7 +33,7 @@
                     'height': this.height,
                 },
                 leftStyle: {
-                    'width': this.progressPercent + '%',
+                    'width': this.percent + '%',
                     'background': this.leftBg,
                     'height': this.height,
                 },
@@ -58,12 +46,14 @@
                 },
                 // 标记是否按下鼠标
                 isMouseDownOnBall: false,
+                // 鼠标进body时是否是mousedown
+                isMouseDownOnBody: false,
+                // 鼠标离开进度条时的clientX
+                outProgressClientX: 0,
+                target: null,
             }
         },
         computed: {
-            progressPercent(){
-                return (this.pValue - this.pMin) / (this.pMax - this.pMin) * 100;
-            },
             progressElement(){
                 return this.$el.getElementsByClassName('progress')[0];
             },
@@ -72,17 +62,17 @@
             mousedownHandler(e){
                 if(e.which === 1){
                     this.isMouseDownOnBall = true;
+                    this.target = e.target;
                 }
             },
             mousemoveHandler(e){
-                if(this.isMouseDownOnBall === true){
+                if(this.isMouseDownOnBall){
                     // 修改进度条本身
                     let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
                     let percent = decimal * 100;
                     this.leftStyle.width = percent + '%';
                     // 修改value
-                    this.pValue = this.pMin + decimal * (this.pMax - this.pMin);
-                    this.$emit('pbar-drag', this.pValue, percent);
+                    this.$emit('pbar-drag', percent);
                 }
             },
             mouseupHandler(e){
@@ -92,9 +82,8 @@
                     let percent = decimal * 100;
                     this.leftStyle.width = percent + '%';
                     // 修改value
-                    this.pValue = this.pMin + decimal * (this.pMax - this.pMin);
-                    this.$emit('pbar-seek', this.pValue, percent);
-
+                    this.$emit('pbar-seek', percent);
+                    
                     this.isMouseDownOnBall = false;
                 }
             },
@@ -103,30 +92,63 @@
                 if(e.which === 0){
                     this.isMouseDownOnBall = false;
                 }
+            },
+            mouseoutHandler(e){
+                if(e.which === 1){
+                    this.outProgressClientX = e.clientX;
+                    this.isMouseDownOnBody = true;
+                    this.bodyEventHandler();
+                }
+            },
+            bodyEventHandler(){
+                let body = document.getElementsByTagName('body')[0];
+                body.addEventListener('mousemove', this.bodyMousemoveHandler);
+                body.addEventListener('mouseup', (e) => {
+                    this.isMouseDownOnBall = false;
+                    this.isMouseDownOnBody = false;
+                    this.outProgressClientX = 0;
+                    body.removeEventListener('mousemove', this.bodyMousemoveHandler);
+                })
+            },
+            bodyMousemoveHandler(e){
+                e.preventDefault();
+                if(e.which === 1 && this.isMouseDownOnBody === true){
+                    let offsetX = e.clientX - this.outProgressClientX;
+                    // 右移了
+                    if(offsetX > 0){
+                        // 在进度条右边界内
+                        if(e.clientX < this.progressElement.clientWidth + this.$el.offsetLeft){
+                            let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
+                            let percent = decimal * 100;
+                            this.leftStyle.width = percent + '%';
+                            this.$emit('pbar-drag', percent)
+                            // 超出右边界
+                        }else{
+                            this.leftStyle.width = '100%';
+                            this.$emit('pbar-drag', 100);
+                        }
+                        // 左移了
+                    }else if(offsetX < 0){
+                        // 在进度条左边界内
+                        if(e.clientX > this.$el.offsetLeft){
+                            let decimal = (e.clientX - this.$el.offsetLeft) / this.progressElement.clientWidth;
+                            let percent = decimal * 100;
+                            this.leftStyle.width = percent + '%';
+                            this.$emit('pbar-drag', percent)
+                            // 超出左边界
+                        }else{
+                            this.leftStyle.width = '0%';
+                            this.$emit('pbar-drag', 0);
+                        }
+                    }
+                }
             }
         },
         watch: {
-            max(cur, old){
-                this.pMax = cur;
-            },
-            min(cur, old){
-                this.pMin = cur;
-            },
-            value(cur, old){
-                this.pValue = cur;
-            },
-            progressPercent(cur, old){
+            percent(cur, old){
                 this.leftStyle.width = cur + '%';
             }
-        },
-        mounted(){
-            // 数据验证
-            if(this.max < this.min){
-                console.error("max can't less than min !");
-            }
-            // 初始百分比
-            this.leftStyle.width = (this.pValue - this.pMin) / (this.pMax - this.pMin) * 100 + '%';
-        },
+        }
     }
 </script>
 
