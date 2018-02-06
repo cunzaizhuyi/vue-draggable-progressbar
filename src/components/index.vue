@@ -1,20 +1,20 @@
 <template>
 	<div class="test">
-       <!-- &lt;!&ndash;demo-0&ndash;&gt;
+        <!--demo-0-->
         <h3>demo 0  默认效果</h3>
         <progress-bar ref="aa"></progress-bar>
         
-        &lt;!&ndash;demo-1&ndash;&gt;
+        <!--demo-1-->
         <h3>demo 1 基本效果</h3>
         <progress-bar width="40%" leftBg="greenyellow" bgc="#ccc" ballBgc="red"></progress-bar>
         
-        &lt;!&ndash;demo-2&ndash;&gt;
+        <!--demo-2-->
         <h3>demo 2 渐变效果</h3>
         <progress-bar width="60%" leftBg="linear-gradient(to right, yellow, pink)" bgc="#ccc" ballBgc="red"></progress-bar>
         
-        &lt;!&ndash;demo-3&ndash;&gt;
+        <!--demo-3-->
         <h3>demo 3 加高效果</h3>
-        <progress-bar width="80%" leftBg="yellow" bgc="#ccc" ballBgc="red" height="30px"></progress-bar>-->
+        <progress-bar width="80%" leftBg="yellow" bgc="#ccc" ballBgc="red" height="30px"></progress-bar>
         
         <!--demo-4-->
         <h3>demo 4 小球透明效果</h3>
